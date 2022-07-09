@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}View Page{% endblock %}
+{% block content %}
+<div class="text-gray-900 bg-gray-200">
+        <center>
+	<h1 class="text-3xl">
+            Your To-Do-List
+        </h1>
+	</center>
+    <div class="px-3 py-4 flex justify-center">
+        <table class="w-full text-md bg-white shadow-md rounded mb-4" style="width:70%">
+	   {% if data %}
+            <tbody>
+                <tr class="border-b">
+                    <th class="text-left p-3 px-5">Task</th>
+                    <th class="text-left p-3 px-5">Created On</th>
+		    <th></th>
+                </tr>
+		{% for d in data %}
+                    <tr class="border-b hover:bg-orange-100">
+                    <td class="p-3 px-5">{{ d.task }}</td>
+                    <td class="p-3 px-5">{{ d.task_dt }}</td>
+					<td class="p-3 px-5 flex justify-end"><button type="button" class="mr-3 text-sm bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline"><a href="{% url 'deletetask' t=d.task %}" onclick="return confirm('Do u really want to delete')">Delete</a></button></td>
+					</tr>
+		{% endfor %}
+            </tbody>
+	{% endif %}
+        </table>
+	
+    </div>
+</div>
+{% endblock %}
