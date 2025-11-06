@@ -1,32 +1,193 @@
 {% extends 'base.html' %}
-{% block title %}View Page{% endblock %}
+
+{% block title %}My Tasks - TaskFlow{% endblock %}
+
 {% block content %}
-<div class="text-gray-900 bg-gray-200">
-        <center>
-	<h1 class="text-3xl">
-            Your To-Do-List
-        </h1>
-	</center>
-    <div class="px-3 py-4 flex justify-center">
-        <table class="w-full text-md bg-white shadow-md rounded mb-4" style="width:70%">
-	   {% if data %}
-            <tbody>
-                <tr class="border-b">
-                    <th class="text-left p-3 px-5">Task</th>
-                    <th class="text-left p-3 px-5">Created On</th>
-		    <th></th>
-                </tr>
-		{% for d in data %}
-                    <tr class="border-b hover:bg-orange-100">
-                    <td class="p-3 px-5">{{ d.task }}</td>
-                    <td class="p-3 px-5">{{ d.task_dt }}</td>
-					<td class="p-3 px-5 flex justify-end"><button type="button" class="mr-3 text-sm bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline"><a href="{% url 'deletetask' t=d.task %}" onclick="return confirm('Do u really want to delete')">Delete</a></button></td>
-					</tr>
-		{% endfor %}
-            </tbody>
-	{% endif %}
-        </table>
-	
+
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <!-- Header -->
+  <div
+    class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 animate-fade-in"
+  >
+    <div>
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">My Tasks</h1>
+      <p class="text-gray-600">Manage and track your to-do list</p>
     </div>
+    <a
+      href="{% url 'create' %}"
+      class="bg-gradient-to-r from-primary-500 to-indigo-600 text-white py-3 px-6 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:from-primary-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 flex items-center space-x-2"
+    >
+      <i class="fas fa-plus-circle"></i>
+      <span>Add New Task</span>
+    </a>
+  </div>
+
+  {% if data %}
+  <!-- Task Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-600 font-medium mb-1">Total Tasks</p>
+          <p class="text-3xl font-bold text-gray-900">{{ data|length }}</p>
+        </div>
+        <div class="bg-blue-100 p-4 rounded-xl">
+          <i class="fas fa-tasks text-blue-600 text-2xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-600 font-medium mb-1">Active</p>
+          <p class="text-3xl font-bold text-green-600">{{ data|length }}</p>
+        </div>
+        <div class="bg-green-100 p-4 rounded-xl">
+          <i class="fas fa-check-circle text-green-600 text-2xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-gray-600 font-medium mb-1">Productivity</p>
+          <p class="text-3xl font-bold text-purple-600">High</p>
+        </div>
+        <div class="bg-purple-100 p-4 rounded-xl">
+          <i class="fas fa-fire text-purple-600 text-2xl"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tasks Grid -->
+  <div class="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+    {% for d in data %}
+    <div
+      class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 overflow-hidden group animate-slide-in break-inside-avoid mb-6"
+    >
+      <!-- Task Header -->
+      <div
+        class="bg-gradient-to-r {% if d.is_completed %}from-gray-100 to-gray-200{% else %}from-primary-50 to-indigo-50{% endif %} p-4 border-b border-gray-100"
+      >
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <div class="flex items-center space-x-2 mb-2">
+              <div
+                class="w-2 h-2 {% if d.is_completed %}bg-gray-500{% else %}bg-green-500 animate-pulse{% endif %} rounded-full"
+              ></div>
+              <span
+                class="text-xs font-semibold {% if d.is_completed %}text-gray-600{% else %}text-primary-600{% endif %} uppercase tracking-wide"
+                >{% if d.is_completed %}Completed{% else %}Active{% endif %}</span
+              >
+            </div>
+            <h3 class="text-sm text-gray-500 flex items-center">
+              <i class="far fa-clock mr-2"></i>
+              {{ d.task_dt|date:"M d, Y" }}
+            </h3>
+          </div>
+          <div
+            class="{% if d.is_completed %}bg-gray-500{% else %}bg-primary-500{% endif %} text-white rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold shadow-md"
+          >
+            {{ forloop.counter }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Task Content -->
+      <div class="p-6">
+        <div class="flex items-start space-x-3 mb-4">
+          <div class="flex-shrink-0 mt-1">
+            <div
+              class="w-6 h-6 rounded-full border-2 {% if d.is_completed %}bg-green-500 border-green-500 flex items-center justify-center{% else %}border-gray-300 group-hover:border-primary-500{% endif %} transition-colors"
+            >
+              {% if d.is_completed %}
+              <i class="fas fa-check text-white text-xs"></i>
+              {% endif %}
+            </div>
+          </div>
+          <p class="{% if d.is_completed %}text-gray-500 line-through{% else %}text-gray-800{% endif %} leading-relaxed flex-1 break-all text-sm">
+            {{ d.task }}
+          </p>
+        </div>
+
+        <div class="text-xs text-gray-500 flex items-center mb-4">
+          <i class="fas fa-info-circle mr-2"></i>
+          <span>Created {{ d.task_dt|timesince }} ago</span>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex space-x-2 pt-4 border-t border-gray-100">
+          <button
+            onclick="if(confirm('Are you sure you want to delete this task?')) window.location.href='{% url 'deletetask' t=d.task %}';"
+            class="flex-1 bg-red-50 hover:bg-red-500 text-red-600 hover:text-white py-2 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2 group"
+          >
+            <i class="fas fa-trash-alt"></i>
+            <span>Delete</span>
+          </button>
+          <button
+            onclick="window.location.href='{% url 'completetask' t=d.task %}';"
+            class="flex-1 {% if d.is_completed %}bg-gray-50 hover:bg-gray-500 text-gray-600{% else %}bg-green-50 hover:bg-green-500 text-green-600{% endif %} hover:text-white py-2 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2"
+          >
+            <i class="fas {% if d.is_completed %}fa-undo{% else %}fa-check{% endif %}"></i>
+            <span>{% if d.is_completed %}Undo{% else %}Complete{% endif %}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination or Load More (Future Enhancement) -->
+  <div class="mt-12 mb-8 text-center">
+    <div class="inline-flex items-center space-x-2 text-gray-500">
+      <i class="fas fa-check-double"></i>
+      <span class="text-sm">You're viewing all {{ data|length }} task{{ data|length|pluralize }}</span>
+    </div>
+  </div>
+
+  {% else %}
+  <!-- Empty State -->
+  <div class="max-w-md mx-auto text-center py-16 animate-fade-in">
+    <div class="bg-white rounded-2xl shadow-xl p-12 border border-gray-100">
+      <div
+        class="w-20 h-20 bg-gradient-to-br from-primary-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6"
+      >
+        <i class="fas fa-clipboard-list text-primary-500 text-3xl"></i>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-3">No Tasks Yet</h3>
+      <p class="text-gray-600 mb-8">
+        You haven't created any tasks yet. Start by adding your first task to
+        get organized!
+      </p>
+      <a
+        href="{% url 'create' %}"
+        class="inline-flex items-center space-x-2 bg-gradient-to-r from-primary-500 to-indigo-600 text-white py-3 px-8 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:from-primary-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200"
+      >
+        <i class="fas fa-plus-circle"></i>
+        <span>Create Your First Task</span>
+      </a>
+    </div>
+
+    <!-- Motivational Tips -->
+    <div class="mt-8 grid grid-cols-2 gap-4">
+      <div
+        class="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-gray-200"
+      >
+        <i class="fas fa-lightbulb text-yellow-500 text-2xl mb-2"></i>
+        <p class="text-xs text-gray-600 font-medium">Stay Organized</p>
+      </div>
+      <div
+        class="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-gray-200"
+      >
+        <i class="fas fa-chart-line text-green-500 text-2xl mb-2"></i>
+        <p class="text-xs text-gray-600 font-medium">Boost Productivity</p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
 </div>
+
 {% endblock %}

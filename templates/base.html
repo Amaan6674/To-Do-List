@@ -1,31 +1,291 @@
-<html>
-<head>
-	<title>{% block title %}{% endblock %}</title>
-<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body>
-<header class="text-gray-600 body-font">
-<div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
-<a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-10 h-10 text-white p-2 bg-blue-500 rounded-full" viewBox="0 0 24 24">
-<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-</svg>
-<span class="ml-3 text-xl">Task Manager</span>
-</a>
-<nav class="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400	flex flex-wrap items-center text-base justify-center">
-{% if user.is_authenticated %}
-<a class="mr-5 hover:text-gray-900" href="{% url 'home' %}">Back Home</a>
-<a class="mr-5 hover:text-gray-900" href="{% url 'ulogout' %}">Logout</a>
-{% else %}
-<a class="mr-5 hover:text-gray-900" href="{% url 'usignup' %}">Sign Up</a>
-<a class="mr-5 hover:text-gray-900" href="{% url 'ulogin' %}">Login</a>
-<a class="mr-5 hover:text-gray-900" href="{% url 'uresetpassword' %}">Reset Password</a>
-{% endif %}
-</nav>
-</div>
-</header>
-{% block content %}
-{% endblock %}
-</body>
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Task Manager{% endblock %}</title>
+
+    <!-- Tailwind CSS 3.x -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Tailwind Config -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#f0f9ff",
+                100: "#e0f2fe",
+                200: "#bae6fd",
+                300: "#7dd3fc",
+                400: "#38bdf8",
+                500: "#0ea5e9",
+                600: "#0284c7",
+                700: "#0369a1",
+                800: "#075985",
+                900: "#0c4a6e",
+              },
+            },
+            animation: {
+              "fade-in": "fadeIn 0.5s ease-in-out",
+              "slide-in": "slideIn 0.3s ease-out",
+              "bounce-slow": "bounce 3s infinite",
+            },
+            keyframes: {
+              fadeIn: {
+                "0%": { opacity: "0" },
+                "100%": { opacity: "1" },
+              },
+              slideIn: {
+                "0%": { transform: "translateY(-10px)", opacity: "0" },
+                "100%": { transform: "translateY(0)", opacity: "1" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 min-h-screen flex flex-col"
+  >
+    <!-- Modern Navigation -->
+    <nav
+      class="bg-white/80 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-gray-200"
+    >
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo -->
+          <a href="{% url 'home' %}" class="flex items-center space-x-3 group">
+            <div
+              class="bg-gradient-to-br from-primary-500 to-indigo-600 p-2 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110"
+            >
+              <svg
+                class="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                />
+              </svg>
+            </div>
+            <span
+              class="text-xl font-bold bg-gradient-to-r from-primary-600 to-indigo-600 bg-clip-text text-transparent"
+            >
+              TaskFlow
+            </span>
+          </a>
+
+          <!-- Desktop Navigation -->
+          <div class="hidden md:flex items-center space-x-1">
+            {% if user.is_authenticated %}
+            <a
+              href="{% url 'home' %}"
+              class="px-4 py-2 rounded-lg text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-200 font-medium"
+            >
+              <i class="fas fa-home mr-2"></i>Home
+            </a>
+            <a
+              href="{% url 'create' %}"
+              class="px-4 py-2 rounded-lg text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-200 font-medium"
+            >
+              <i class="fas fa-plus-circle mr-2"></i>New Task
+            </a>
+            <a
+              href="{% url 'viewtask' %}"
+              class="px-4 py-2 rounded-lg text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-200 font-medium"
+            >
+              <i class="fas fa-list mr-2"></i>My Tasks
+            </a>
+            <div class="h-8 w-px bg-gray-300 mx-2"></div>
+            <div class="flex items-center space-x-3 px-3">
+              <div class="flex items-center space-x-2">
+                <div
+                  class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-indigo-500 flex items-center justify-center text-white font-semibold text-sm shadow-md"
+                >
+                  {{ user.username|first|upper }}
+                </div>
+                <span class="text-sm font-medium text-gray-700"
+                  >{{ user.username }}</span
+                >
+              </div>
+            </div>
+            <a
+              href="{% url 'ulogout' %}"
+              class="ml-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 font-medium shadow-md hover:shadow-lg"
+            >
+              <i class="fas fa-sign-out-alt mr-2"></i>Logout
+            </a>
+            {% else %}
+            <a
+              href="{% url 'usignup' %}"
+              class="px-4 py-2 rounded-lg text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-200 font-medium"
+            >
+              <i class="fas fa-user-plus mr-2"></i>Sign Up
+            </a>
+            <a
+              href="{% url 'ulogin' %}"
+              class="px-4 py-2 bg-gradient-to-r from-primary-500 to-indigo-600 text-white rounded-lg hover:from-primary-600 hover:to-indigo-700 transition-all duration-200 font-medium shadow-md hover:shadow-lg"
+            >
+              <i class="fas fa-sign-in-alt mr-2"></i>Login
+            </a>
+            {% endif %}
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <button
+            id="mobile-menu-btn"
+            class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <svg
+              class="w-6 h-6 text-gray-700"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div
+        id="mobile-menu"
+        class="hidden md:hidden bg-white border-t border-gray-200"
+      >
+        <div class="px-4 py-3 space-y-2">
+          {% if user.is_authenticated %}
+          <div
+            class="flex items-center space-x-2 pb-3 border-b border-gray-200"
+          >
+            <div
+              class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-indigo-500 flex items-center justify-center text-white font-semibold shadow-md"
+            >
+              {{ user.username|first|upper }}
+            </div>
+            <span class="font-medium text-gray-900">{{ user.username }}</span>
+          </div>
+          <a
+            href="{% url 'home' %}"
+            class="block px-4 py-3 rounded-lg text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all"
+          >
+            <i class="fas fa-home mr-2"></i>Home
+          </a>
+          <a
+            href="{% url 'create' %}"
+            class="block px-4 py-3 rounded-lg text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all"
+          >
+            <i class="fas fa-plus-circle mr-2"></i>New Task
+          </a>
+          <a
+            href="{% url 'viewtask' %}"
+            class="block px-4 py-3 rounded-lg text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all"
+          >
+            <i class="fas fa-list mr-2"></i>My Tasks
+          </a>
+          <a
+            href="{% url 'ulogout' %}"
+            class="block px-4 py-3 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-all"
+          >
+            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+          </a>
+          {% else %}
+          <a
+            href="{% url 'usignup' %}"
+            class="block px-4 py-3 rounded-lg text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all"
+          >
+            <i class="fas fa-user-plus mr-2"></i>Sign Up
+          </a>
+          <a
+            href="{% url 'ulogin' %}"
+            class="block px-4 py-3 rounded-lg bg-primary-500 text-white hover:bg-primary-600 transition-all"
+          >
+            <i class="fas fa-sign-in-alt mr-2"></i>Login
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="animate-fade-in flex-grow">{% block content %} {% endblock %}</main>
+
+    <!-- Compact Footer -->
+    <footer class="bg-white/80 backdrop-blur-md border-t border-gray-200">
+      <div class="container mx-auto px-4 py-4">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0"
+        >
+          <p class="text-sm text-gray-600">
+            © 2025 TaskFlow. Made with
+            <span class="text-red-500">♥</span> by
+            <a
+              href="https://github.com/Amaan6674"
+              target="_blank"
+              class="font-semibold text-primary-600 hover:text-primary-700 transition-colors"
+              >Amaan</a
+            >
+          </p>
+
+          <div class="flex space-x-3">
+            <a
+              href="https://github.com/Amaan6674"
+              target="_blank"
+              class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-900 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-110"
+              title="GitHub"
+            >
+              <i class="fab fa-github text-sm"></i>
+            </a>
+            <a
+              href="https://linkedin.com/in/amaan6674"
+              target="_blank"
+              class="w-8 h-8 rounded-full bg-gray-100 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-110"
+              title="LinkedIn"
+            >
+              <i class="fab fa-linkedin text-sm"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+      const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+      const mobileMenu = document.getElementById("mobile-menu");
+
+      if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener("click", () => {
+          mobileMenu.classList.toggle("hidden");
+        });
+      }
+    </script>
+
+    {% block extra_js %} {% endblock %}
+  </body>
 </html>
-	

@@ -1,0 +1,40 @@
+# Django
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+db.sqlite3
+db.sqlite3-journal
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Static and Media files
+/staticfiles/
+/mediafiles/
+/static/
+/media/
+
+# Migrations (keep migrations folder but ignore auto-generated files if needed)
+# */migrations/*.py
+# !*/migrations/__init__.py
