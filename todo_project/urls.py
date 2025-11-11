@@ -13,6 +13,6 @@ urlpatterns = [
     path("uresetpassword/",uresetpassword,name="uresetpassword"),
     path("create/",create,name="create"),
     path("viewtask/",viewtask,name="viewtask"),
-    path("deletetask/<str:t>",deletetask,name="deletetask"),
-    path("completetask/<str:t>",completetask,name="completetask"),
+    path("deletetask/<int:t>",deletetask,name="deletetask"),
+    path("completetask/<int:t>",completetask,name="completetask"),
 ]

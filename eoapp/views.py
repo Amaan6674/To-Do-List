@@ -26,12 +26,12 @@ def viewtask(request):
 
 
 def deletetask(request,t):
-	ds=TaskModel.objects.get(task=t)
+	ds=TaskModel.objects.get(id=t,us=request.user)
 	ds.delete()
 	return redirect('viewtask')
 
 def completetask(request,t):
-	task=TaskModel.objects.get(task=t,us=request.user)
+	task=TaskModel.objects.get(id=t,us=request.user)
 	task.is_completed = not task.is_completed  # Toggle completion status
 	task.save()
 	return redirect('viewtask')
