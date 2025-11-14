@@ -166,7 +166,6 @@ def uresetpassword(request):
 			for i in range(6):
 				pw= pw + text[randrange(len(text))]
 			
-			# Beautiful HTML email for password reset
 			html_message = f"""
 			<!DOCTYPE html>
 			<html>
